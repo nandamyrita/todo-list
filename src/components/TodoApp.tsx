@@ -1,15 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar } from './ui/calendar';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Checkbox } from './ui/checkbox';
-import { Badge } from './ui/badge';
-import { Separator } from './ui/separator';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
-import { CalendarIcon, Plus, Trash2, Edit3, Calendar as CalendarIconSmall } from 'lucide-react';
-import { format, isToday, isTomorrow, isYesterday, startOfDay, isSameDay } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import React, { useState, useEffect } from "react";
+import { Calendar } from "./ui/calendar";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Checkbox } from "./ui/checkbox";
+import { Badge } from "./ui/badge";
+import { Separator } from "./ui/separator";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
+import {
+  CalendarIcon,
+  Plus,
+  Trash2,
+  Edit3,
+  Calendar as CalendarIconSmall,
+} from "lucide-react";
+import {
+  format,
+  isToday,
+  isTomorrow,
+  isYesterday,
+  startOfDay,
+  isSameDay,
+} from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface Todo {
   id: string;
@@ -22,19 +42,19 @@ interface Todo {
 export function TodoApp() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [newTodo, setNewTodo] = useState('');
+  const [newTodo, setNewTodo] = useState("");
   const [editingTodo, setEditingTodo] = useState<string | null>(null);
-  const [editText, setEditText] = useState('');
+  const [editText, setEditText] = useState("");
   const [isMobileCalendarOpen, setIsMobileCalendarOpen] = useState(false);
 
   // Load todos from localStorage on mount
   useEffect(() => {
-    const savedTodos = localStorage.getItem('todos');
+    const savedTodos = localStorage.getItem("todos");
     if (savedTodos) {
       const parsedTodos = JSON.parse(savedTodos).map((todo: any) => ({
         ...todo,
         date: new Date(todo.date),
-        createdAt: new Date(todo.createdAt)
+        createdAt: new Date(todo.createdAt),
       }));
       setTodos(parsedTodos);
     }
@@ -42,7 +62,7 @@ export function TodoApp() {
 
   // Save todos to localStorage when todos change
   useEffect(() => {
-    localStorage.setItem('todos', JSON.stringify(todos));
+    localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
 
   const addTodo = () => {
@@ -52,21 +72,23 @@ export function TodoApp() {
         text: newTodo.trim(),
         completed: false,
         date: selectedDate,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
       setTodos([...todos, todo]);
-      setNewTodo('');
+      setNewTodo("");
     }
   };
 
   const toggleTodo = (id: string) => {
-    setTodos(todos.map(todo => 
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    ));
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
   };
 
   const deleteTodo = (id: string) => {
-    setTodos(todos.filter(todo => todo.id !== id));
+    setTodos(todos.filter((todo) => todo.id !== id));
   };
 
   const startEditing = (todo: Todo) => {
@@ -76,34 +98,34 @@ export function TodoApp() {
 
   const saveEdit = () => {
     if (editText.trim() && editingTodo) {
-      setTodos(todos.map(todo => 
-        todo.id === editingTodo ? { ...todo, text: editText.trim() } : todo
-      ));
+      setTodos(
+        todos.map((todo) =>
+          todo.id === editingTodo ? { ...todo, text: editText.trim() } : todo
+        )
+      );
       setEditingTodo(null);
-      setEditText('');
+      setEditText("");
     }
   };
 
   const cancelEdit = () => {
     setEditingTodo(null);
-    setEditText('');
+    setEditText("");
   };
 
   const getFilteredTodos = () => {
-    return todos.filter(todo => 
-      isSameDay(todo.date, selectedDate)
-    );
+    return todos.filter((todo) => isSameDay(todo.date, selectedDate));
   };
 
   const getDateLabel = (date: Date) => {
-    if (isToday(date)) return 'Hoje';
-    if (isTomorrow(date)) return 'Amanhã';
-    if (isYesterday(date)) return 'Ontem';
+    if (isToday(date)) return "Hoje";
+    if (isTomorrow(date)) return "Amanhã";
+    if (isYesterday(date)) return "Ontem";
     return format(date, "d 'de' MMMM", { locale: ptBR });
   };
 
   const filteredTodos = getFilteredTodos();
-  const completedCount = filteredTodos.filter(todo => todo.completed).length;
+  const completedCount = filteredTodos.filter((todo) => todo.completed).length;
   const totalCount = filteredTodos.length;
 
   const CalendarComponent = () => (
@@ -123,15 +145,18 @@ export function TodoApp() {
       <div className="space-y-2">
         <h3 className="font-medium">Resumo</h3>
         <div className="space-y-1">
-          {[0, 1, 2].map(days => {
+          {[0, 1, 2].map((days) => {
             const date = new Date();
             date.setDate(date.getDate() + days);
-            const dayTodos = todos.filter(todo => isSameDay(todo.date, date));
-            const completed = dayTodos.filter(todo => todo.completed).length;
-            
+            const dayTodos = todos.filter((todo) => isSameDay(todo.date, date));
+            const completed = dayTodos.filter((todo) => todo.completed).length;
+
             return (
-              <div key={days} className="flex items-center justify-between py-1 px-2 rounded-md hover:bg-accent cursor-pointer" 
-                   onClick={() => setSelectedDate(date)}>
+              <div
+                key={days}
+                className="flex items-center justify-between py-1 px-2 rounded-md hover:bg-accent cursor-pointer"
+                onClick={() => setSelectedDate(date)}
+              >
                 <span className="text-sm">{getDateLabel(date)}</span>
                 <Badge variant="secondary" className="text-xs">
                   {completed}/{dayTodos.length}
@@ -173,10 +198,13 @@ export function TodoApp() {
                   {getDateLabel(selectedDate)}
                 </p>
               </div>
-              
+
               {/* Mobile Calendar Button */}
               <div className="lg:hidden">
-                <Sheet open={isMobileCalendarOpen} onOpenChange={setIsMobileCalendarOpen}>
+                <Sheet
+                  open={isMobileCalendarOpen}
+                  onOpenChange={setIsMobileCalendarOpen}
+                >
                   <SheetTrigger asChild>
                     <Button variant="outline" size="icon">
                       <CalendarIconSmall className="h-4 w-4" />
@@ -186,7 +214,8 @@ export function TodoApp() {
                     <SheetHeader>
                       <SheetTitle>Calendário</SheetTitle>
                       <SheetDescription>
-                        Selecione uma data para visualizar e gerenciar suas tarefas
+                        Selecione uma data para visualizar e gerenciar suas
+                        tarefas
                       </SheetDescription>
                     </SheetHeader>
                     <div className="mt-6">
@@ -208,9 +237,15 @@ export function TodoApp() {
                     </span>
                   </div>
                   <div className="w-full bg-secondary rounded-full h-2">
-                    <div 
+                    <div
                       className="bg-primary h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${totalCount > 0 ? (completedCount / totalCount) * 100 : 0}%` }}
+                      style={{
+                        width: `${
+                          totalCount > 0
+                            ? (completedCount / totalCount) * 100
+                            : 0
+                        }%`,
+                      }}
                     />
                   </div>
                 </CardContent>
@@ -225,7 +260,7 @@ export function TodoApp() {
                     placeholder="Adicionar nova tarefa..."
                     value={newTodo}
                     onChange={(e) => setNewTodo(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && addTodo()}
+                    onKeyPress={(e) => e.key === "Enter" && addTodo()}
                     className="flex-1"
                   />
                   <Button onClick={addTodo}>
@@ -238,9 +273,7 @@ export function TodoApp() {
             {/* Todo List */}
             <Card>
               <CardHeader>
-                <CardTitle>
-                  Tarefas - {getDateLabel(selectedDate)}
-                </CardTitle>
+                <CardTitle>Tarefas - {getDateLabel(selectedDate)}</CardTitle>
               </CardHeader>
               <CardContent>
                 {filteredTodos.length === 0 ? (
@@ -258,13 +291,15 @@ export function TodoApp() {
                             checked={todo.completed}
                             onCheckedChange={() => toggleTodo(todo.id)}
                           />
-                          
+
                           {editingTodo === todo.id ? (
                             <div className="flex-1 flex gap-2">
                               <Input
                                 value={editText}
                                 onChange={(e) => setEditText(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && saveEdit()}
+                                onKeyPress={(e) =>
+                                  e.key === "Enter" && saveEdit()
+                                }
                                 onBlur={saveEdit}
                                 className="flex-1"
                                 autoFocus
@@ -272,22 +307,26 @@ export function TodoApp() {
                               <Button size="sm" onClick={saveEdit}>
                                 Salvar
                               </Button>
-                              <Button size="sm" variant="outline" onClick={cancelEdit}>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={cancelEdit}
+                              >
                                 Cancelar
                               </Button>
                             </div>
                           ) : (
                             <>
-                              <span 
+                              <span
                                 className={`flex-1 ${
-                                  todo.completed 
-                                    ? 'line-through text-muted-foreground' 
-                                    : ''
+                                  todo.completed
+                                    ? "line-through text-muted-foreground"
+                                    : ""
                                 }`}
                               >
                                 {todo.text}
                               </span>
-                              
+
                               <div className="flex gap-1">
                                 <Button
                                   size="icon"
