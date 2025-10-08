@@ -30,6 +30,8 @@ import {
   isSameDay,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface Todo {
   id: string;
@@ -66,17 +68,40 @@ export function TodoApp() {
   }, [todos]);
 
   const addTodo = () => {
-    if (newTodo.trim()) {
-      const todo: Todo = {
-        id: Date.now().toString(),
-        text: newTodo.trim(),
-        completed: false,
-        date: selectedDate,
-        createdAt: new Date(),
-      };
-      setTodos([...todos, todo]);
-      setNewTodo("");
-    }
+    newTodo.trim()
+      ? (setTodos([
+          ...todos,
+          {
+            id: Date.now().toString(),
+            text: newTodo.trim(),
+            completed: false,
+            date: selectedDate,
+            createdAt: new Date(),
+          },
+        ]),
+        setNewTodo(""),
+        toast.success("Tarefa adicionada com sucesso!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        }))
+      : toast.error("ERRO! A tarefa não pode ser vazia.", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
   };
 
   const toggleTodo = (id: string) => {
@@ -355,6 +380,18 @@ export function TodoApp() {
                 )}
               </CardContent>
             </Card>
+
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              closeOnClick
+              pauseOnHover
+              draggable
+              theme="light"
+              transition={Bounce}
+            />
+            
           </div>
         </div>
       </div>
