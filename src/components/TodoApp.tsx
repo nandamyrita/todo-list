@@ -113,7 +113,20 @@ export function TodoApp() {
   };
 
   const deleteTodo = (id: string) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+  setTodos(todos.filter((todo) => todo.id !== id));
+  toast.info("Tarefa removida.", {
+    position: "top-right",
+    autoClose: 3000,  
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+    transition: Bounce,
+  }); 
+    
+    
   };
 
   const startEditing = (todo: Todo) => {
@@ -131,6 +144,17 @@ export function TodoApp() {
       setEditingTodo(null);
       setEditText("");
     }
+    toast.info("Edição salva.", {
+      position: "top-right",
+      autoClose: 3000,    
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+    });
   };
 
   const cancelEdit = () => {
@@ -391,7 +415,7 @@ export function TodoApp() {
               theme="light"
               transition={Bounce}
             />
-            
+
           </div>
         </div>
       </div>
